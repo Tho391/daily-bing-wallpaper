@@ -5,10 +5,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.thomas.apps.dailywallpaper.database.dao.UserDao
+import com.thomas.apps.dailywallpaper.database.entity.ImageEntity
 import com.thomas.apps.dailywallpaper.database.entity.UserEntity
 
 @Database(
-    entities = [UserEntity::class],
+    entities = [
+        UserEntity::class,
+        ImageEntity::class
+    ],
     version = 1,
     exportSchema = false
 )

@@ -16,4 +16,7 @@ object AdapterListener {
     interface ItemUpdateListener<T> {
         fun onUpdate(item: T, position: Int)
     }
+
 }
+
+typealias OnClickListener<T> = (item: T) -> Unit
