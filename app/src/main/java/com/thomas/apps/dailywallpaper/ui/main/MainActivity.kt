@@ -1,6 +1,8 @@
 package com.thomas.apps.dailywallpaper.ui.main
 
 import android.os.Bundle
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -49,6 +51,25 @@ class MainActivity : AppCompatActivity() {
         setUpRecyclerView()
 
         observe()
+
+        //webView()
+    }
+
+    private fun webView() {
+        binding.webView.apply {
+            settings.javaScriptEnabled = true;
+            settings.allowFileAccessFromFileURLs = true;
+            settings.allowUniversalAccessFromFileURLs = true;
+            loadUrl("https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8&mkt=en-US")
+            webViewClient = object: WebViewClient(){
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    super.onPageFinished(view, url)
+
+                    Timber.i("finish: $view.")
+                }
+            }
+        }
+
     }
 
     private fun observe() {

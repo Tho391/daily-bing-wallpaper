@@ -36,21 +36,21 @@ interface NetworkService {
     fun requestDeleteUser(@Body userParam: UserParam): LiveData<ApiResponse<UserResponse>>
 
     @Headers(
-        "Access-Control-Allow-Origin: *"
+        "Cookie: MUIDB=3A1DD3130FA66293012BC32B0EB46327"
     )
     @GET(EndPoints.WALL_PAPER)
     suspend fun requestWallpaper(
         @Query("idx") index: Int = 0,
         @Query("n") numberOfPicture: Int = 8,
         @Query("format") format: String = "js"
-    ): Response<BingResponse>
+    ): Response<Any>
 
     companion object {
-        private const val API_URL = "https://www.bing.com/"
+        private const val API_URL = "https://infinite-anchorage-80482.herokuapp.com/"
 
         fun create(application: Application): NetworkService {
             val logger =
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
+                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.HEADERS }
 
             val networkConnectionInterceptor = NetworkConnectionInterceptor(application)
 

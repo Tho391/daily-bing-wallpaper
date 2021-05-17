@@ -32,20 +32,24 @@ class BingImagePagingSource(private val service: NetworkService) : PagingSource<
             val size = params.loadSize
             val response = service.requestWallpaper(nextPageNumber, size)
 
-            if (response.isSuccessful) {
-                val body = response.body()
-                val images = body?.images?.map { it.toImage() } ?: emptyList()
+//            if (response.isSuccessful) {
+//                val body = response.body()
+//                val images = body?.images?.map { it.toImage() } ?: emptyList()
+//
+//                val nextKey = if (nextPageNumber + size == 10) nextPageNumber + size else null
+//                return LoadResult.Page(
+//                    data = images,
+//                    prevKey = null,
+//                    nextKey = nextKey,
+//                )
+//            } else {
+//                val throwable = Throwable(response.errorBody()?.string())
+//                return LoadResult.Error(throwable)
+//            }
 
-                val nextKey = if (nextPageNumber + size == 10) nextPageNumber + size else null
-                return LoadResult.Page(
-                    data = images,
-                    prevKey = null,
-                    nextKey = nextKey,
-                )
-            } else {
-                val throwable = Throwable(response.errorBody()?.string())
-                return LoadResult.Error(throwable)
-            }
+            val throwable = Throwable("test")
+            return LoadResult.Error(throwable)
+
         } catch (e: Exception) {
             // Handle errors in this block and return LoadResult.Error if it is an
             // expected error (such as a network failure).
