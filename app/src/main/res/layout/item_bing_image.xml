@@ -25,7 +25,7 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imageView"
-                bindImage="@{item.imageUrl}"
+
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/image_medium"
                 android:adjustViewBounds="true"

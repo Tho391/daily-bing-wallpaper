@@ -29,26 +29,26 @@ class BingImagePagingSource(private val service: NetworkService) : PagingSource<
         try {
             // Start refresh at page 1 if undefined.
             val nextPageNumber = params.key ?: START_PAGE
-            val size = params.loadSize
-            val response = service.requestWallpaper(nextPageNumber, size)
+//            val size = params.loadSize
 
-//            if (response.isSuccessful) {
-//                val body = response.body()
-//                val images = body?.images?.map { it.toImage() } ?: emptyList()
-//
-//                val nextKey = if (nextPageNumber + size == 10) nextPageNumber + size else null
-//                return LoadResult.Page(
-//                    data = images,
-//                    prevKey = null,
-//                    nextKey = nextKey,
-//                )
-//            } else {
-//                val throwable = Throwable(response.errorBody()?.string())
-//                return LoadResult.Error(throwable)
-//            }
+            Timber.i("page: $nextPageNumber - ")
+            val response = service.requestWallpaper(nextPageNumber)
 
-            val throwable = Throwable("test")
-            return LoadResult.Error(throwable)
+            if (response.isSuccessful) {
+                val body = response.body()
+                val images = body?.images?.map { it.toImage() } ?: emptyList()
+
+//                val nextKey = images.lastOrNull()?.getNexKey()
+                val nextKey = if (nextPageNumber + 7 > 7) null else nextPageNumber + 7
+                return LoadResult.Page(
+                    data = images,
+                    prevKey = null,
+                    nextKey = nextKey,
+                )
+            } else {
+                val throwable = Throwable(response.errorBody()?.string())
+                return LoadResult.Error(throwable)
+            }
 
         } catch (e: Exception) {
             // Handle errors in this block and return LoadResult.Error if it is an

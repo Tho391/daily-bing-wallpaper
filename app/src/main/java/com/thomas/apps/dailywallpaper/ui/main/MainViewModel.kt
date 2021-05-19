@@ -10,7 +10,7 @@ import com.thomas.apps.dailywallpaper.repository.paging.BingImagePagingSource
 
 class MainViewModel(private val service: NetworkService) : ViewModel() {
 
-    val images = Pager(PagingConfig(pageSize = 8)) {
+    val images = Pager(PagingConfig(pageSize = 7)) {
         BingImagePagingSource(service)
     }.flow.cachedIn(viewModelScope)
 }

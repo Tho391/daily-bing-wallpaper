@@ -41,16 +41,17 @@ interface NetworkService {
     @GET(EndPoints.WALL_PAPER)
     suspend fun requestWallpaper(
         @Query("idx") index: Int = 0,
-        @Query("n") numberOfPicture: Int = 8,
+        @Query("n") numberOfPicture: Int = 7,
         @Query("format") format: String = "js"
-    ): Response<Any>
+    ): Response<BingResponse>
 
     companion object {
-        private const val API_URL = "https://infinite-anchorage-80482.herokuapp.com/"
+//        const val API_URL = "https://infinite-anchorage-80482.herokuapp.com/"
+        const val API_URL = "https://bing.com/"
 
         fun create(application: Application): NetworkService {
             val logger =
-                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.HEADERS }
+                HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
 
             val networkConnectionInterceptor = NetworkConnectionInterceptor(application)
 
@@ -58,7 +59,7 @@ interface NetworkService {
                 .addInterceptor(logger)
                 .addInterceptor(networkConnectionInterceptor)
 
-            val useMockData = true
+            val useMockData = false
             val client = if (useMockData) {
                 val mockInterceptor = MockDataInterceptor()
                 okHttpClient.addInterceptor(mockInterceptor)
@@ -75,7 +76,7 @@ interface NetworkService {
             return Retrofit.Builder()
                 .baseUrl(API_URL)
                 .client(client.build())
-                .addCallAdapterFactory(LiveDataCallAdapterFactory())
+                //.addCallAdapterFactory(LiveDataCallAdapterFactory())
                 .addConverterFactory(NullOnEmptyConverterFactory())
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .build()

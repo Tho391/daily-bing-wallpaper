@@ -6,10 +6,14 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import coil.request.ImageRequest
 import com.thomas.apps.dailywallpaper.databinding.ItemBingImageBinding
 import com.thomas.apps.dailywallpaper.utils.OnClickListener
+import timber.log.Timber
 
-class ImageAdapter : PagingDataAdapter<ImageAdapter.ImageItem, ImageAdapter.ViewHolder>(ImageItemDC()) {
+class ImageAdapter :
+    PagingDataAdapter<ImageAdapter.ImageItem, ImageAdapter.ViewHolder>(ImageItemDC()) {
 
     var onDownloadClick: OnClickListener<ImageItem>? = null
     var onSetWallpaperClick: OnClickListener<ImageItem>? = null
@@ -33,6 +37,16 @@ class ImageAdapter : PagingDataAdapter<ImageAdapter.ImageItem, ImageAdapter.View
 
         fun bind(item: ImageItem) {
             binding.item = item
+
+            //Timber.i("image: ${item.imageUrl}")
+            binding.imageView.load(item.imageUrl) {
+                listener(
+                    onError = { request: ImageRequest, throwable: Throwable ->
+                        Timber.e("url: ${item.imageUrl}")
+                        Timber.e(throwable)
+                    }
+                )
+            }
 
             binding.buttonDownload.setOnClickListener {
                 onDownloadClick?.invoke(item)
