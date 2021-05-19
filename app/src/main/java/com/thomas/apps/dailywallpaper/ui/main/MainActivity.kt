@@ -1,19 +1,18 @@
 package com.thomas.apps.dailywallpaper.ui.main
 
 import android.os.Bundle
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
 import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.work.*
 import com.thomas.apps.dailywallpaper.adapter.ImageAdapter
 import com.thomas.apps.dailywallpaper.databinding.ActivityMainBinding
 import com.thomas.apps.dailywallpaper.network.NetworkService
+import com.thomas.apps.dailywallpaper.utils.ActivityUtils.toast
 import com.thomas.apps.dailywallpaper.utils.OnClickListener
-import com.thomas.apps.dailywallpaper.utils.ViewUtils.viewGone
+import com.thomas.apps.dailywallpaper.worker.DownloadImageWork
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -31,6 +30,8 @@ class MainActivity : AppCompatActivity() {
             onDownloadClick = object : OnClickListener<ImageAdapter.ImageItem> {
                 override fun invoke(item: ImageAdapter.ImageItem) {
                     Timber.i("download ${item.title}")
+
+                    createDownloadWork(item.imageUrl)
                 }
             }
 
@@ -40,6 +41,37 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun createDownloadWork(imageUrl: String) {
+        val downloadWorkRequest =
+            OneTimeWorkRequestBuilder<DownloadImageWork>()
+                .addTag("download image")
+                .setInputData(
+                    workDataOf(
+                        DownloadImageWork.IMAGE_URL to imageUrl
+                    )
+                )
+                .build()
+
+        WorkManager
+            .getInstance(this)
+            .enqueueUniqueWork(imageUrl, ExistingWorkPolicy.KEEP, downloadWorkRequest)
+
+//        WorkManager.getInstance(this).getWorkInfoByIdLiveData(downloadWorkRequest.id)
+//            .observe(this) {
+//                when (it?.state) {
+//                    WorkInfo.State.SUCCEEDED -> {
+//                        toast("Download success")
+//                    }
+//                    WorkInfo.State.FAILED -> {
+//                        toast("Download fail")
+//                    }
+//                    else -> {
+//                        Timber.i("other state ${it.state.name}")
+//                    }
+//                }
+//            }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
