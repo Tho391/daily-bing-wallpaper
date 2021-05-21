@@ -13,9 +13,11 @@ import com.thomas.apps.dailywallpaper.network.NetworkService
 import com.thomas.apps.dailywallpaper.utils.ActivityUtils.toast
 import com.thomas.apps.dailywallpaper.utils.OnClickListener
 import com.thomas.apps.dailywallpaper.worker.DownloadImageWork
+import com.thomas.apps.dailywallpaper.worker.SetWallpaperWork
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,9 +40,31 @@ class MainActivity : AppCompatActivity() {
             onSetWallpaperClick = object : OnClickListener<ImageAdapter.ImageItem> {
                 override fun invoke(item: ImageAdapter.ImageItem) {
                     Timber.i("set wallpaper ${item.title}")
+
+                    createSetWallpaperWork(item.imageUrl)
                 }
             }
         }
+    }
+
+    private fun createSetWallpaperWork(imageUrl: String) {
+        val setWallpaperWorkRequest =
+            OneTimeWorkRequestBuilder<SetWallpaperWork>()
+                .addTag("set wallpaper")
+//                .setBackoffCriteria(
+//                    BackoffPolicy.LINEAR,
+//                    OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+//                    TimeUnit.MILLISECONDS)
+                .setInputData(
+                    workDataOf(
+                        DownloadImageWork.IMAGE_URL to imageUrl
+                    )
+                )
+                .build()
+
+        WorkManager
+            .getInstance(this)
+            .enqueueUniqueWork(imageUrl, ExistingWorkPolicy.KEEP, setWallpaperWorkRequest)
     }
 
     private fun createDownloadWork(imageUrl: String) {

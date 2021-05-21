@@ -3,7 +3,9 @@
     package="com.thomas.apps.dailywallpaper">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.SET_WALLPAPER"/>
 
     <application
         android:name=".MainApplication"

@@ -38,8 +38,6 @@ class DownloadImageWork(context: Context, params: WorkerParameters) :
 
         val imageUriInput = inputData.getString(IMAGE_URL) ?: return Result.failure()
 
-        val with = applicationContext.getScreenWidth()
-        val height = applicationContext.getScreenHeight()
         val imageUrl = imageUriInput.replace("1920x1080", "1080x1920")
         return downloadFile(imageUrl)
 

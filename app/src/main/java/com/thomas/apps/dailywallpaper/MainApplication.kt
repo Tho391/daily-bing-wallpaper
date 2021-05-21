@@ -7,6 +7,7 @@ import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.SvgDecoder
+import com.thomas.apps.dailywallpaper.worker.NotificationUtils.createNotificationChannel
 import timber.log.Timber
 
 class MainApplication : Application() {
@@ -17,6 +18,8 @@ class MainApplication : Application() {
         initTimber()
 
         setUpCoil()
+
+        applicationContext.createNotificationChannel()
     }
 
     private fun initTimber() {
