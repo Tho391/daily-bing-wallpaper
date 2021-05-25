@@ -1,6 +1,7 @@
 package com.thomas.apps.dailywallpaper.network
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.LiveData
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -49,11 +50,11 @@ interface NetworkService {
 //        const val API_URL = "https://infinite-anchorage-80482.herokuapp.com/"
         const val API_URL = "https://bing.com/"
 
-        fun create(application: Application): NetworkService {
+        fun create(context: Context): NetworkService {
             val logger =
                 HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
 
-            val networkConnectionInterceptor = NetworkConnectionInterceptor(application)
+            val networkConnectionInterceptor = NetworkConnectionInterceptor(context)
 
             val okHttpClient = OkHttpClient.Builder()
                 .addInterceptor(logger)
