@@ -31,7 +31,7 @@ class AutoWallpaperWorker(context: Context, params: WorkerParameters) :
         return if (response.isSuccessful) {
             val bingResponse = response.body()
             if (bingResponse == null) {
-                applicationContext.createNotification("Api response is empty")
+                applicationContext.showNotification("Api response is empty")
 
                 Timber.i("Api response is empty")
                 Result.failure(
@@ -40,10 +40,11 @@ class AutoWallpaperWorker(context: Context, params: WorkerParameters) :
                     )
                 )
             } else {
-                val url = bingResponse.images?.firstOrNull()?.url?.replace("1920x1080", "1080x1920")
+//                val url = bingResponse.images?.firstOrNull()?.url?.replace("1920x1080", "1080x1920")
 
+                val url = bingResponse.images?.firstOrNull()?.toImage()?.url?.replace("1920x1080", "1080x1920")
                 return if (url.isNullOrEmpty()) {
-                    applicationContext.createNotification("Url is null")
+                    applicationContext.showNotification("Url is null")
 
                     Timber.i("Url is null")
                     Result.failure(
@@ -58,7 +59,7 @@ class AutoWallpaperWorker(context: Context, params: WorkerParameters) :
                 }
             }
         } else {
-            applicationContext.createNotification(
+            applicationContext.showNotification(
                 "Call api fail: ${
                     response.errorBody()?.string()
                 }"

@@ -49,7 +49,7 @@ class MainApplication : Application(),Configuration.Provider {
 
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.UNMETERED)
-            .setRequiresCharging(true)
+            //.setRequiresCharging(true)
             .build()
 
         val setWallpaperWorkRequest =
