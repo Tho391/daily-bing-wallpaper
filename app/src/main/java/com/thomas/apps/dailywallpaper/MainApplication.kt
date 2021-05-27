@@ -11,12 +11,15 @@ import coil.decode.ImageDecoderDecoder
 import coil.decode.SvgDecoder
 import com.thomas.apps.dailywallpaper.worker.AutoWallpaperWorker
 import com.thomas.apps.dailywallpaper.worker.NotificationUtils.createNotificationChannel
+import com.thomas.apps.dailywallpaper.worker.NotificationUtils.showNotification
+import com.thomas.apps.dailywallpaper.worker.NotificationUtils.showNotificationDelay
 import timber.log.Timber
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 
-class MainApplication : Application(),Configuration.Provider {
+class MainApplication : Application(), Configuration.Provider {
 
     override fun getWorkManagerConfiguration() =
         Configuration.Builder()
@@ -39,14 +42,31 @@ class MainApplication : Application(),Configuration.Provider {
         val calendar15h15 = Calendar.getInstance(Locale.getDefault())
         calendar15h15.set(Calendar.HOUR_OF_DAY, 15)
         calendar15h15.set(Calendar.MINUTE, 15)
+        calendar15h15.set(Calendar.SECOND, 0)
+        calendar15h15.set(Calendar.MILLISECOND, 0)
 
+        val fifteenHoursInMillis: Long = 15 * 60 * 60 * 1000L
 
         val now = Calendar.getInstance(Locale.getDefault())
 
+        val todayRemain: Long = (
+                (23 - now.get(Calendar.HOUR_OF_DAY)) * 60 * 60 * 1000 +
+                        (59 - now.get(Calendar.MINUTE)) * 60 * 1000 +
+                        (59 - now.get(Calendar.SECOND)) * 1000 +
+                        (999 - now.get(Calendar.MILLISECOND))
+                ).toLong()
+
         val diff = calendar15h15.timeInMillis - now.timeInMillis
-        val delayMillis = if (diff < 0) 0 else diff
+        val delayMillis: Long = if (diff < 0) {
+            setWallpaperNow()
+            todayRemain + fifteenHoursInMillis
+        } else {
+            diff
+        }
 
-
+        val date = Date(delayMillis)
+        val spf = SimpleDateFormat("HH:mm:ss.SSS dd-MM-yyyy", Locale.getDefault())
+        applicationContext.showNotificationDelay("delay ${spf.format(date)}")
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.UNMETERED)
             //.setRequiresCharging(true)
@@ -63,7 +83,28 @@ class MainApplication : Application(),Configuration.Provider {
             .getInstance(this)
             .enqueueUniquePeriodicWork(
                 "auto wallpaper work",
-                ExistingPeriodicWorkPolicy.KEEP,
+                ExistingPeriodicWorkPolicy.REPLACE,
+                setWallpaperWorkRequest
+            )
+    }
+
+    private fun setWallpaperNow() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.UNMETERED)
+            //.setRequiresCharging(true)
+            .build()
+
+        val setWallpaperWorkRequest =
+            OneTimeWorkRequestBuilder<AutoWallpaperWorker>()
+                .addTag("set wallpaper now")
+                .setConstraints(constraints)
+                .build()
+
+        WorkManager
+            .getInstance(this)
+            .enqueueUniqueWork(
+                "set wallpaper now",
+                ExistingWorkPolicy.REPLACE,
                 setWallpaperWorkRequest
             )
     }

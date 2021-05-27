@@ -16,6 +16,10 @@ object NotificationUtils {
 
     const val NOTIFICATION_ID = 100
 
+    const val CHANNEL_DELAY_ID = "Set wallpaper delay"
+    const val CHANNEL_DELAY_NAME = "Wallpaper channel delay"
+    const val NOTIFICATION_DELAY_ID = 101
+
     fun Context.createNotification(content: String): Notification {
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_wallpaper)
@@ -35,10 +39,14 @@ object NotificationUtils {
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
             }
+            val channel2 = NotificationChannel(CHANNEL_DELAY_ID, CHANNEL_DELAY_NAME, importance).apply {
+                description = descriptionText
+            }
             // Register the channel with the system
             val notificationManager: NotificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
+            notificationManager.createNotificationChannel(channel2)
         }
     }
 
@@ -46,6 +54,13 @@ object NotificationUtils {
         with(NotificationManagerCompat.from(this)) {
             // notificationId is a unique int for each notification that you must define
             notify(NOTIFICATION_ID, createNotification(content))
+        }
+    }
+
+    fun Context.showNotificationDelay(content: String) {
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(NOTIFICATION_DELAY_ID, createNotification(content))
         }
     }
 }
