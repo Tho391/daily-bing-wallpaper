@@ -1,6 +1,5 @@
 package com.thomas.apps.dailywallpaper
 
-import android.R.attr.delay
 import android.app.Application
 import android.os.Build
 import androidx.work.*
@@ -11,7 +10,6 @@ import coil.decode.ImageDecoderDecoder
 import coil.decode.SvgDecoder
 import com.thomas.apps.dailywallpaper.worker.AutoWallpaperWorker
 import com.thomas.apps.dailywallpaper.worker.NotificationUtils.createNotificationChannel
-import com.thomas.apps.dailywallpaper.worker.NotificationUtils.showNotification
 import com.thomas.apps.dailywallpaper.worker.NotificationUtils.showNotificationDelay
 import timber.log.Timber
 import java.text.SimpleDateFormat
@@ -66,7 +64,13 @@ class MainApplication : Application(), Configuration.Provider {
 
         val date = Date(delayMillis)
         val spf = SimpleDateFormat("HH:mm:ss.SSS dd-MM-yyyy", Locale.getDefault())
-        applicationContext.showNotificationDelay("delay ${spf.format(date)}")
+
+        val timeSet = Date(delayMillis + Date().time)
+
+        val delayInHours = delayMillis.toDouble() / 1000.0 / 60 / 60
+        val string = String.format("%.2f", delayInHours)
+        applicationContext.showNotificationDelay("delay $string hours - ${spf.format(timeSet)}")
+//        applicationContext.showNotificationDelay("delay ${spf.format(date)}")
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.UNMETERED)
             //.setRequiresCharging(true)
