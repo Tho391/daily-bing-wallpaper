@@ -3,7 +3,6 @@ package com.thomas.apps.dailywallpaper.worker
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
@@ -15,15 +14,10 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import coil.ImageLoader
 import coil.request.ImageRequest
-import coil.request.ImageResult
 import coil.request.SuccessResult
-import com.thomas.apps.dailywallpaper.utils.ScreenUtils.getScreenHeight
-import com.thomas.apps.dailywallpaper.utils.ScreenUtils.getScreenWidth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import okhttp3.Dispatcher
 import java.io.IOException
-import java.lang.Exception
 import java.util.*
 
 class DownloadImageWork(context: Context, params: WorkerParameters) :
@@ -87,10 +81,10 @@ class DownloadImageWork(context: Context, params: WorkerParameters) :
         val displayName = UUID.randomUUID().toString() + ".png"
 
         return try {
-            saveBitmap(applicationContext,bm,format,mimeType, displayName)
+            saveBitmap(applicationContext, bm, format, mimeType, displayName)
 
             null
-        }catch (e: Exception){
+        } catch (e: Exception) {
             e.message
         }
     }

@@ -37,11 +37,11 @@ class MainApplication : Application(), Configuration.Provider {
     }
 
     private fun startAutoWallpaperWorker() {
-        val calendar15h15 = Calendar.getInstance(Locale.getDefault())
-        calendar15h15.set(Calendar.HOUR_OF_DAY, 15)
-        calendar15h15.set(Calendar.MINUTE, 15)
-        calendar15h15.set(Calendar.SECOND, 0)
-        calendar15h15.set(Calendar.MILLISECOND, 0)
+        val calendar15h = Calendar.getInstance(Locale.getDefault())
+        calendar15h.set(Calendar.HOUR_OF_DAY, 15)
+        calendar15h.set(Calendar.MINUTE, 0)
+        calendar15h.set(Calendar.SECOND, 0)
+        calendar15h.set(Calendar.MILLISECOND, 0)
 
         val fifteenHoursInMillis: Long = 15 * 60 * 60 * 1000L
 
@@ -54,7 +54,7 @@ class MainApplication : Application(), Configuration.Provider {
                         (999 - now.get(Calendar.MILLISECOND))
                 ).toLong()
 
-        val diff = calendar15h15.timeInMillis - now.timeInMillis
+        val diff = calendar15h.timeInMillis - now.timeInMillis
         val delayMillis: Long = if (diff < 0) {
             setWallpaperNow()
             todayRemain + fifteenHoursInMillis

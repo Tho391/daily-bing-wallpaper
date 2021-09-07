@@ -22,32 +22,39 @@ object NotificationUtils {
 
     fun Context.createNotification(content: String): Notification {
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_wallpaper)
-            .setContentTitle("Set wallpaper")
+            .setSmallIcon(R.drawable.ic_download_done)
+            .setContentTitle("Set Wallpaper")
             .setContentText(content)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+        return builder.build()
+    }
+
+    fun Context.createNotificationDelay(content: String): Notification {
+        val builder = NotificationCompat.Builder(this, CHANNEL_DELAY_ID)
+            .setSmallIcon(R.drawable.ic_downloading)
+            .setContentTitle("Delay Set Wallpaper")
+            .setContentText(content)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
         return builder.build()
     }
 
     fun Context.createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = CHANNEL_NAME
-            val descriptionText = CHANNEL_DESRIPTION
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
-            }
-            val channel2 = NotificationChannel(CHANNEL_DELAY_ID, CHANNEL_DELAY_NAME, importance).apply {
-                description = descriptionText
-            }
-            // Register the channel with the system
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-            notificationManager.createNotificationChannel(channel2)
+        val name = CHANNEL_NAME
+        val descriptionText = CHANNEL_DESRIPTION
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+            description = descriptionText
         }
+        val channel2 = NotificationChannel(CHANNEL_DELAY_ID, CHANNEL_DELAY_NAME, importance).apply {
+            description = descriptionText
+        }
+        // Register the channel with the system
+        val notificationManager: NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+        notificationManager.createNotificationChannel(channel2)
     }
 
     fun Context.showNotification(content: String) {
@@ -60,7 +67,7 @@ object NotificationUtils {
     fun Context.showNotificationDelay(content: String) {
         with(NotificationManagerCompat.from(this)) {
             // notificationId is a unique int for each notification that you must define
-            notify(NOTIFICATION_DELAY_ID, createNotification(content))
+            notify(NOTIFICATION_DELAY_ID, createNotificationDelay(content))
         }
     }
 }
