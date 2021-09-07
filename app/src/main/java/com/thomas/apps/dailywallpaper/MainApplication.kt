@@ -69,7 +69,7 @@ class MainApplication : Application(), Configuration.Provider {
 
         val delayInHours = delayMillis.toDouble() / 1000.0 / 60 / 60
         val string = String.format("%.2f", delayInHours)
-        applicationContext.showNotificationDelay("delay $string hours - ${spf.format(timeSet)}")
+        applicationContext.showNotificationDelay("Delay $string hours - ${spf.format(timeSet)}")
 //        applicationContext.showNotificationDelay("delay ${spf.format(date)}")
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.UNMETERED)

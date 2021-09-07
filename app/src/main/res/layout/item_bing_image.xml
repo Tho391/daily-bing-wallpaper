@@ -55,16 +55,17 @@
                 android:paddingVertical="@dimen/margin_medium"
                 android:text="@{item.title}"
                 android:textColor="@color/grey_50"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/imageView"
                 tools:text="Buttermere, Lake District, England" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/textView_copyright"
-                style="?attr/textAppearanceBody2"
+                style="?attr/textAppearanceBody1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/margin_large"
-                android:paddingVertical="@dimen/margin_small"
+                android:paddingVertical="@dimen/margin_large"
                 android:text="@{item.copyright}"
                 android:textColor="@color/grey_200"
                 app:layout_constraintTop_toBottomOf="@id/textView_title"
