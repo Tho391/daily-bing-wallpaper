@@ -1,27 +1,40 @@
 package com.thomas.apps.dailywallpaper.ui.main
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.*
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.thomas.apps.dailywallpaper.adapter.ImageAdapter
 import com.thomas.apps.dailywallpaper.databinding.ActivityMainBinding
 import com.thomas.apps.dailywallpaper.network.NetworkService
-import com.thomas.apps.dailywallpaper.utils.ActivityUtils.toast
 import com.thomas.apps.dailywallpaper.utils.OnClickListener
 import com.thomas.apps.dailywallpaper.worker.DownloadImageWork
 import com.thomas.apps.dailywallpaper.worker.SetWallpaperWork
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    var imageUrl: String? = null
+
+    val requestPerm =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { grant ->
+            if (grant) {
+                imageUrl?.let { createDownloadWork(it) }
+            }
+        }
 
     private val viewModel by viewModels<MainViewModel> {
         MainViewModelFactory(NetworkService.create(application))
@@ -33,7 +46,12 @@ class MainActivity : AppCompatActivity() {
                 override fun invoke(item: ImageAdapter.ImageItem) {
                     Timber.i("download ${item.title}")
 
-                    createDownloadWork(item.imageUrl)
+                    imageUrl = item.imageUrl
+                    if (Build.VERSION.SDK_INT <= 28)
+                        requestPerm.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    else {
+                        createDownloadWork(item.imageUrl)
+                    }
                 }
             }
 

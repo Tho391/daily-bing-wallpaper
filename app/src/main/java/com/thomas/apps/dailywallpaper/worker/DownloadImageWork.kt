@@ -15,6 +15,7 @@ import androidx.work.workDataOf
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
+import com.thomas.apps.dailywallpaper.worker.NotificationUtils.showNotificationDownload
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.IOException
@@ -111,8 +112,11 @@ class DownloadImageWork(context: Context, params: WorkerParameters) :
                     uri = it // Keep uri reference so it can be removed on failure
 
                     openOutputStream(it)?.use { stream ->
-                        if (!bitmap.compress(format, 95, stream))
+                        if (!bitmap.compress(format, 95, stream)) {
                             throw IOException("Failed to save bitmap.")
+                        } else {
+                            context.showNotificationDownload(uri)
+                        }
                     } ?: throw IOException("Failed to open output stream.")
 
                 } ?: throw IOException("Failed to create new MediaStore record.")
