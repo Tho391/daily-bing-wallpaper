@@ -4,7 +4,6 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.thomas.apps.dailywallpaper.R
@@ -20,21 +19,23 @@ object NotificationUtils {
     const val CHANNEL_DELAY_NAME = "Wallpaper channel delay"
     const val NOTIFICATION_DELAY_ID = 101
 
-    fun Context.createNotification(content: String): Notification {
+    private fun Context.createNotification(content: String): Notification {
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_download_done)
             .setContentTitle("Set Wallpaper")
             .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setNotificationSilent()
         return builder.build()
     }
 
-    fun Context.createNotificationDelay(content: String): Notification {
+    private fun Context.createNotificationDelay(content: String): Notification {
         val builder = NotificationCompat.Builder(this, CHANNEL_DELAY_ID)
             .setSmallIcon(R.drawable.ic_downloading)
             .setContentTitle("Delay Set Wallpaper")
             .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setNotificationSilent()
         return builder.build()
     }
 

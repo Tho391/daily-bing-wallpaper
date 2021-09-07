@@ -37,6 +37,8 @@ class MainApplication : Application(), Configuration.Provider {
     }
 
     private fun startAutoWallpaperWorker() {
+
+
         val calendar15h = Calendar.getInstance(Locale.getDefault())
         calendar15h.set(Calendar.HOUR_OF_DAY, 15)
         calendar15h.set(Calendar.MINUTE, 0)
