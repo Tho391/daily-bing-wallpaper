@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.thomas.apps.dailywallpaper.adapter.ImageAdapter.ImageItem" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/grey_800">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/image_medium"
+                android:adjustViewBounds="true"
+                android:scaleType="center"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textView_date"
+                style="?attr/textAppearanceCaption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black_50"
+                android:paddingHorizontal="@dimen/margin_large"
+                android:paddingVertical="@dimen/margin_medium"
+                android:text="@{item.getDateString()}"
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toBottomOf="@id/imageView"
+                tools:text="Friday 14 May 2021" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textView_title"
+                style="?attr/textAppearanceBody1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/margin_large"
+                android:paddingVertical="@dimen/margin_medium"
+                android:text="@{item.title}"
+                android:textColor="@color/grey_50"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/imageView"
+                tools:text="Buttermere, Lake District, England" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textView_copyright"
+                style="?attr/textAppearanceBody1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="@dimen/margin_large"
+                android:paddingTop="@dimen/margin_large"
+                android:paddingBottom="@dimen/margin_medium"
+                android:text="@{item.copyright}"
+                android:textColor="@color/grey_200"
+                app:layout_constraintTop_toBottomOf="@id/textView_title"
+                tools:text="Steesrt Smith/Alamy" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_download"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_large"
+                android:text="@string/download"
+                android:textColor="?attr/colorSecondary"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView_copyright" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_set_wallpaper"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_large"
+                android:text="@string/set_as_wallpaper"
+                android:textColor="?attr/colorSecondary"
+                app:layout_constraintStart_toEndOf="@id/button_download"
+                app:layout_constraintTop_toBottomOf="@id/textView_copyright" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>
