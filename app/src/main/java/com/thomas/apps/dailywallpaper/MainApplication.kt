@@ -125,7 +125,7 @@ class MainApplication : Application(), Configuration.Provider {
         val imageLoader = ImageLoader.Builder(applicationContext)
             .componentRegistry {
                 if (Build.VERSION.SDK_INT >= 28) {
-                    add(ImageDecoderDecoder())
+                    add(ImageDecoderDecoder(applicationContext))
                 } else {
                     add(GifDecoder())
                 }
