@@ -17,12 +17,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 
-class MainApplication : Application(), Configuration.Provider {
-
-    override fun getWorkManagerConfiguration() =
-        Configuration.Builder()
-            .setMinimumLoggingLevel(android.util.Log.VERBOSE)
-            .build()
+class MainApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
@@ -32,6 +27,11 @@ class MainApplication : Application(), Configuration.Provider {
         setUpCoil()
 
         applicationContext.createNotificationChannel()
+
+        val config = Configuration.Builder()
+            .setMinimumLoggingLevel(android.util.Log.VERBOSE) // Or yourdesired level
+            .build()
+        WorkManager.initialize(this, config)
 
         startAutoWallpaperWorker()
     }

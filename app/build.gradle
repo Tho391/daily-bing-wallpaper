@@ -1,17 +1,20 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
 }
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.thomas.apps.dailywallpaper"
         minSdkVersion 26
-        targetSdkVersion 32
+        targetSdk 34
+        compileSdk 34
         versionCode 2
         versionName "1.0.1"
 
@@ -29,30 +32,31 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 
     buildFeatures {
         dataBinding = true
         viewBinding = true
+        buildConfig true
     }
+    namespace 'com.thomas.apps.dailywallpaper'
 
-    configurations.all {
+    configurations.configureEach {
         resolutionStrategy {
             force("org.antlr:antlr4-runtime:4.7.1")
             force("org.antlr:antlr4-tool:4.7.1")
         }
     }
 
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-        kotlinOptions {
-            freeCompilerArgs += [
-                    "-Xjvm-default=all",
-            ]
+    tasks.withType(KotlinJvmCompile).configureEach {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+            freeCompilerArgs.add("-Xjvm-default=all")
         }
     }
 }
@@ -60,13 +64,13 @@ android {
 dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation 'androidx.core:core-ktx:1.7.0'
-    implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
 
     //timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
@@ -81,36 +85,37 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.2'
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
     implementation 'com.squareup.moshi:moshi-kotlin:1.13.0'
-    kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.13.0'
-    implementation 'com.google.code.gson:gson:2.8.7'
+    ksp 'com.squareup.moshi:moshi-kotlin-codegen:1.13.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.squareup.moshi:moshi:1.13.0'
     testImplementation 'com.squareup.okhttp3:mockwebserver:5.0.0-alpha.2'
+    implementation "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.9.0"
 
     //db
-    implementation "androidx.room:room-runtime:2.4.2"
-    kapt "androidx.room:room-compiler:2.4.2"
-    implementation "androidx.room:room-ktx:2.4.2"
-    testImplementation "androidx.room:room-testing:2.4.2"
+    implementation "androidx.room:room-runtime:2.6.1"
+    ksp "androidx.room:room-compiler:2.6.1"
+    implementation "androidx.room:room-ktx:2.6.1"
+    testImplementation "androidx.room:room-testing:2.6.1"
 
     //view
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
     //ktx extension
-    implementation "androidx.collection:collection-ktx:1.2.0"
-    implementation 'androidx.fragment:fragment-ktx:1.4.1'
-    implementation 'androidx.activity:activity-ktx:1.6.0-alpha01'
-    implementation "androidx.lifecycle:lifecycle-livedata-core-ktx:2.4.1"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.1"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
+    implementation "androidx.collection:collection-ktx:1.4.0"
+    implementation 'androidx.fragment:fragment-ktx:1.8.1'
+    implementation 'androidx.activity:activity-ktx:1.9.0'
+    implementation "androidx.lifecycle:lifecycle-livedata-core-ktx:2.8.3"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.8.3"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.8.3"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3"
 
     //paging
-    implementation "androidx.paging:paging-runtime-ktx:3.1.1"
-    implementation "androidx.paging:paging-common-ktx:3.1.1"
-    implementation "androidx.paging:paging-rxjava2-ktx:3.1.1"
+    implementation "androidx.paging:paging-runtime-ktx:3.3.0"
+    implementation "androidx.paging:paging-common-ktx:3.3.0"
+    implementation "androidx.paging:paging-rxjava2-ktx:3.3.0"
 
     // Kotlin + coroutines
-    implementation "androidx.work:work-runtime-ktx:2.8.0-alpha01"
-    androidTestImplementation "androidx.work:work-testing:2.8.0-alpha01"
-    implementation "androidx.work:work-multiprocess:2.8.0-alpha01"
+    implementation "androidx.work:work-runtime-ktx:2.9.0"
+    androidTestImplementation "androidx.work:work-testing:2.9.0"
+    implementation "androidx.work:work-multiprocess:2.9.0"
 }
