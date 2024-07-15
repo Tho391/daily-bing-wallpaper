@@ -1,7 +1,11 @@
 package com.thomas.apps.dailywallpaper
 
 import android.app.Application
+import android.content.pm.PackageManager
 import android.os.Build
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.work.*
 import coil.Coil
 import coil.ImageLoader

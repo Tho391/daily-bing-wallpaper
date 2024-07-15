@@ -18,6 +18,8 @@ import coil.request.SuccessResult
 import com.thomas.apps.dailywallpaper.worker.NotificationUtils.showNotificationDownload
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 
@@ -63,6 +65,7 @@ class DownloadImageWork(context: Context, params: WorkerParameters) :
                         )
                     }
                 }
+
                 else -> {
                     Result.failure(
                         workDataOf(
@@ -78,11 +81,10 @@ class DownloadImageWork(context: Context, params: WorkerParameters) :
         val bm = drawable.toBitmap()
 
         val format = Bitmap.CompressFormat.PNG
-        val mimeType = "image/png"
         val displayName = UUID.randomUUID().toString() + ".png"
 
         return try {
-            saveBitmap(applicationContext, bm, format, mimeType, displayName)
+            saveBitmapToCache(applicationContext, bm, format, displayName)
 
             null
         } catch (e: Exception) {
@@ -91,42 +93,24 @@ class DownloadImageWork(context: Context, params: WorkerParameters) :
     }
 
     @Throws(IOException::class)
-    fun saveBitmap(
-        context: Context, bitmap: Bitmap, format: Bitmap.CompressFormat,
-        mimeType: String, displayName: String
+    fun saveBitmapToCache(
+        context: Context,
+        bitmap: Bitmap,
+        format: Bitmap.CompressFormat,
+        fileName: String
     ): Uri {
-
-        val values = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
-            put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
-            }
-        }
-
-        var uri: Uri? = null
+        val cacheDir = context.cacheDir
+        val file = File(cacheDir, fileName)
 
         return runCatching {
-            with(context.contentResolver) {
-                insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)?.also {
-                    uri = it // Keep uri reference so it can be removed on failure
-
-                    openOutputStream(it)?.use { stream ->
-                        if (!bitmap.compress(format, 95, stream)) {
-                            throw IOException("Failed to save bitmap.")
-                        } else {
-                            context.showNotificationDownload(uri)
-                        }
-                    } ?: throw IOException("Failed to open output stream.")
-
-                } ?: throw IOException("Failed to create new MediaStore record.")
+            FileOutputStream(file).use { outputStream ->
+                if (!bitmap.compress(format, 95, outputStream)) {
+                    throw IOException("Failed to save bitmap to cache.")
+                }
             }
+            Uri.fromFile(file)
         }.getOrElse {
-            uri?.let { orphanUri ->
-                // Don't leave an orphan entry in the MediaStore
-                context.contentResolver.delete(orphanUri, null, null)
-            }
-
+            // Handle exceptions, e.g., log the error
             throw it
         }
     }

@@ -1,11 +1,13 @@
 package com.thomas.apps.dailywallpaper.ui.main
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,10 +31,14 @@ class MainActivity : AppCompatActivity() {
 
     var imageUrl: String? = null
 
-    val requestPerm =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { grant ->
-            if (grant) {
-                imageUrl?.let { createDownloadWork(it) }
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission granted, proceed with notification setup
+            } else {
+                // Permission denied, handle accordingly (e.g., show a message)
             }
         }
 
@@ -47,11 +53,7 @@ class MainActivity : AppCompatActivity() {
                     Timber.i("download ${item.title}")
 
                     imageUrl = item.imageUrl
-                    if (Build.VERSION.SDK_INT <= 28)
-                        requestPerm.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    else {
-                        createDownloadWork(item.imageUrl)
-                    }
+                    createDownloadWork(item.imageUrl)
                 }
             }
 
@@ -69,10 +71,6 @@ class MainActivity : AppCompatActivity() {
         val setWallpaperWorkRequest =
             OneTimeWorkRequestBuilder<SetWallpaperWork>()
                 .addTag("set wallpaper")
-//                .setBackoffCriteria(
-//                    BackoffPolicy.LINEAR,
-//                    OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
-//                    TimeUnit.MILLISECONDS)
                 .setInputData(
                     workDataOf(
                         DownloadImageWork.IMAGE_URL to imageUrl
@@ -99,21 +97,6 @@ class MainActivity : AppCompatActivity() {
         WorkManager
             .getInstance(this)
             .enqueueUniqueWork(imageUrl, ExistingWorkPolicy.KEEP, downloadWorkRequest)
-
-//        WorkManager.getInstance(this).getWorkInfoByIdLiveData(downloadWorkRequest.id)
-//            .observe(this) {
-//                when (it?.state) {
-//                    WorkInfo.State.SUCCEEDED -> {
-//                        toast("Download success")
-//                    }
-//                    WorkInfo.State.FAILED -> {
-//                        toast("Download fail")
-//                    }
-//                    else -> {
-//                        Timber.i("other state ${it.state.name}")
-//                    }
-//                }
-//            }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -121,6 +104,22 @@ class MainActivity : AppCompatActivity() {
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                // Permission already granted, proceed with notification setup
+            } else {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        } else {
+            // For devices below Android 13, the permission is granted by default
+            // Proceed with notification setup
+        }
+
 
         setUpRecyclerView()
 
@@ -149,10 +148,6 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             imageAdapter.loadStateFlow.collectLatest { loadStates ->
-                //binding.progressCircular.viewGone(loadStates.refresh is LoadState.Loading)
-
-//                retry.isVisible = loadState.refresh !is LoadState.Loading
-//                errorMsg.isVisible = loadState.refresh is LoadState.Error
             }
         }
     }
