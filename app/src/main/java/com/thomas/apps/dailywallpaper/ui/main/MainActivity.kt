@@ -9,12 +9,15 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.TerminalSeparatorType
+import androidx.paging.insertHeaderItem
 import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
+import com.thomas.apps.dailywallpaper.R
 import com.thomas.apps.dailywallpaper.adapter.ImageAdapter
 import com.thomas.apps.dailywallpaper.databinding.ActivityMainBinding
 import com.thomas.apps.dailywallpaper.network.NetworkService
@@ -134,7 +137,19 @@ class MainActivity : AppCompatActivity() {
                     val items = pagingData.map {
                         it.toImageItem()
                     }
-                    imageAdapter.submitData(items)
+
+                    val newItems = items.insertHeaderItem(
+                        terminalSeparatorType = TerminalSeparatorType.FULLY_COMPLETE,
+                        item = ImageAdapter.ImageItem(
+                            id = "default image",
+                            date = "2024/07/18",
+                            title = "Default Image",
+                            copyright = "Default Image",
+                            imageUrl = "",
+                        )
+                    )
+                    imageAdapter.submitData(newItems)
+
                 }
             }
         }
