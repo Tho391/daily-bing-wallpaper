@@ -6,6 +6,8 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'com.google.devtools.ksp'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -15,8 +17,8 @@ android {
         minSdkVersion 26
         targetSdk 34
         compileSdk 34
-        versionCode 4
-        versionName "1.0.3"
+        versionCode 5
+        versionName "1.0.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -118,4 +120,8 @@ dependencies {
     implementation "androidx.work:work-runtime-ktx:2.9.0"
     androidTestImplementation "androidx.work:work-testing:2.9.0"
     implementation "androidx.work:work-multiprocess:2.9.0"
+
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
 }
